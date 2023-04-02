@@ -1,3 +1,5 @@
+import 'package:e_magazine_ui_challenge/src/ui/ui.dart';
+import 'package:e_magazine_ui_challenge/src/utils/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -9,12 +11,10 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.defaultTheme,
+      home: const MagazineHomeScreen(),
     );
   }
 }
