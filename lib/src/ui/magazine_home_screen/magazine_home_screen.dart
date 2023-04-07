@@ -1,11 +1,28 @@
+import 'package:e_magazine_ui_challenge/src/blocs/blocs.dart';
 import 'package:e_magazine_ui_challenge/src/ui/magazine_home_screen/widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../utils/constants/asset_consts.dart';
 import '../../utils/utils.dart';
 
-class MagazineHomeScreen extends StatelessWidget {
+class MagazineHomeScreen extends StatefulWidget {
   const MagazineHomeScreen({super.key});
+
+  @override
+  State<MagazineHomeScreen> createState() => _MagazineHomeScreenState();
+}
+
+class _MagazineHomeScreenState extends State<MagazineHomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final size = MediaQuery.of(context).size;
+      context.read<MagazineCardCubit>().setSize(size);
+    });
+    context.read<MagazineCardCubit>().initializeMagazines();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,6 +59,11 @@ class MagazineHomeScreen extends StatelessWidget {
       backgroundColor: AppColor.black,
       body: Stack(
         children: [
+          Container(
+            height: size.height,
+            width: size.width,
+            decoration: const BoxDecoration(),
+          ),
           Positioned(
             bottom: 0.0,
             child: Container(
@@ -141,9 +163,34 @@ class MagazineHomeScreen extends StatelessWidget {
               ),
             ),
           ),
-          const Positioned(
-            child: MagazineCard(
-              imagePath: AssetConsts.dazed1,
+          Positioned(
+            child: BlocBuilder<MagazineCardCubit, MagazineCardState>(
+              builder: (context, state) {
+                return Stack(
+                  children: state.magazineImages
+                      .map(
+                        (magazineImage) => Transform(
+                          transform: Matrix4.identity(),
+                          //      ..rotateZ(cardModel.angle * pi / 180),
+                          //  alignment: Alignment.center,
+                          child: MagazineCard(
+                            imagePath: magazineImage,
+                            isFrontImage:
+                                state.magazineImages.last == magazineImage,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                );
+              },
+            ),
+          ),
+          Positioned(
+            bottom: 20,
+            left: 30,
+            right: 30,
+            child: MagazineList(
+              size: size,
             ),
           ),
         ],
